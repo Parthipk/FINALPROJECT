@@ -1,0 +1,62 @@
+FormUpdate: handler(async (req, res) => {
+    const { applicantId } = req.params;  
+    const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        location,
+        coverLetter,
+        resume,
+        documentName,
+        uploadedDocument,
+        password,
+        confirmPassword
+    } = req.body;
+
+    // Check if the applicant exists
+    const existingApplicant = await candidate.findById(applicantId);
+
+    if (!existingApplicant) {
+        return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If passwords are provided, check if they match and hash the password
+    if (password || confirmPassword) {
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: 'Passwords do not match' });
+        }
+
+        // Hash the password before saving it
+        const hashedPassword = await bcrypt.hash(password, 10);
+        existingApplicant.password = hashedPassword;
+    }
+
+    // Update other applicant fields
+    if (firstName) existingApplicant.firstName = firstName;
+    if (lastName) existingApplicant.lastName = lastName;
+    if (email) existingApplicant.email = email;
+    if (phone) existingApplicant.phone = phone;
+    if (location) existingApplicant.location = location;
+    if (coverLetter) existingApplicant.coverLetter = coverLetter;
+    if (resume) existingApplicant.resume = resume;
+    if (documentName) existingApplicant.documentName = documentName;
+    if (uploadedDocument) existingApplicant.uploadedDocument = uploadedDocument;
+
+    // Save the updated applicant
+    const updatedApplicant = await existingApplicant.save();
+
+    // Respond with success message and updated applicant details
+    res.status(200).json({
+        message: 'Applicant details updated successfully',
+        applicant: {
+            firstName: updatedApplicant.firstName,
+            lastName: updatedApplicant.lastName,
+            email: updatedApplicant.email,
+            phone: updatedApplicant.phone,
+            location: updatedApplicant.location,
+            documentName: updatedApplicant.documentName,
+            uploadedDocument: updatedApplicant.uploadedDocument
+        }
+    });
+})
