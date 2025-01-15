@@ -3,6 +3,7 @@ const router = require("./router");
 require('dotenv').config();
 const app = express()
 const cors = require("cors");
+app.use(express.json());
 const Connect_DB = require("./dbConnection/mono");
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -10,7 +11,6 @@ app.use(cookieParser());
 const port = 3000
 app.use(cors())
 Connect_DB()
-app.use(express.json())
 
 app.use('/',router)
 

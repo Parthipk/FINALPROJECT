@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import the Cookies library
+import Cookies from 'js-cookie';
 import { FaBriefcase, FaMapMarkerAlt, FaSuitcase, FaMailBulk } from 'react-icons/fa';
 import image from '../../assets/home/rb_802.png';
 
@@ -18,7 +18,7 @@ export default function Jobs() {
     const fetchJobs = async () => {
       try {
         const response = await axios.post('http://localhost:3000/recruiter/get');
-        console.log('Fetched Jobs:', response.data); 
+
         if (Array.isArray(response.data) && response.data.length > 0) {
           setJobs(response.data);
           filterJobs(response.data);
@@ -35,13 +35,12 @@ export default function Jobs() {
 
     const interval = setInterval(() => {
       fetchJobs();
-    }, 1000); 
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   const filterJobs = (jobs) => {
-    // Retrieve cookie values
     const jobCookie = Cookies.get('job');
     const locationCookie = Cookies.get('location');
     const categoryCookie = Cookies.get('category');
@@ -95,8 +94,29 @@ export default function Jobs() {
     setApplicationStatus(null);
   };
 
-  const applyForJob = () => {
-    setApplicationStatus('Applied');
+  const applyForJob = async () => {
+    if (!selectedJob) return;
+
+    const data = {
+      companyEmail: selectedJob.email,
+      firstName: Cookies.get('firstName'),
+      jobTitle: selectedJob.jobTitle,
+      companyName: selectedJob.companyName
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3000/send', data);
+
+      if (response.status === 200) {
+        setApplicationStatus('Applied');
+        alert('Application sent successfully!');
+      } else {
+        alert('Failed to send application');
+      }
+    } catch (error) {
+      console.error('Error occurred while applying:', error);
+      alert('There was an error while applying. Please try again later.');
+    }
   };
 
   const cancelApplication = () => {
@@ -142,7 +162,7 @@ export default function Jobs() {
                 <div className="flex items-center justify-center">
                   {Cookies.get('firstName') ? (
                     <button
-                      onClick={() => openModal(job)} 
+                      onClick={() => openModal(job)}
                       className="bg-[#309689] text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors mt-4"
                     >
                       View Details
@@ -186,23 +206,38 @@ export default function Jobs() {
             <button onClick={closeModal} className="absolute top-4 right-4 text-4xl text-gray-600 hover:text-gray-800">&times;</button>
             <div className="flex flex-col items-center">
               <h2 className="text-3xl font-semibold text-gray-800 mb-4">{selectedJob.jobTitle}</h2>
-              <img src={image} alt={selectedJob.jobTitle} className="w-[50%] h-[30%] object-cover rounded-lg mb-6" />
+              <img src={image} alt={selectedJob.jobTitle} className="w-[50%] h-[20%] object-cover rounded-lg mb-6" />
               <p className="text-lg text-gray-700 mb-4 ">{selectedJob.jobDescription}</p>
-              <div className="text-lg text-gray-600  text-left">
-                <p className="flex items-center mb-2"><FaBriefcase className="text-xl text-[#309689] mr-2" /><strong>Work Model : </strong> &nbsp;{selectedJob.workModel}</p>
-                <p className="flex items-center mb-2"><FaSuitcase className="text-xl text-[#309689] mr-2" /><strong>Experience Required : </strong> &nbsp;{selectedJob.experience}</p>
-                <p className="flex items-center mb-2"><FaMapMarkerAlt className="text-xl text-[#309689] mr-2" /><strong>Location :</strong> &nbsp; {selectedJob.companyLocation}</p>
-                <p className="flex items-center mb-4"><FaMailBulk className="text-xl text-[#309689] mr-2" /><strong>Email :</strong> &nbsp; {selectedJob.email}</p>
+              <div className="text-lg text-gray-600 w-full text-left space-y-3">
+                <div className="grid grid-cols-2 gap-4 items-center ml-40">
+                  <p className="flex items-center mb-2">
+                    <FaBriefcase className="text-xl text-[#309689] mr-2" />
+                    <strong>Work Model: </strong> &nbsp;{selectedJob.workModel}
+                  </p>
+                  <p className="flex items-center mb-2">
+                    <FaSuitcase className="text-xl text-[#309689] mr-2" />
+                    <strong>Experience Required: </strong> &nbsp;{selectedJob.experience}
+                  </p>
+                  <p className="flex items-center mb-2">
+                    <FaMapMarkerAlt className="text-xl text-[#309689] mr-2" />
+                    <strong>Location: </strong> &nbsp;{selectedJob.companyLocation}
+                  </p>
+                  <p className="flex items-center mb-2">
+                    <FaMailBulk className="text-xl text-[#309689] mr-2" />
+                    <strong>Email: </strong> &nbsp;{selectedJob.email}
+                  </p>
+                </div>
               </div>
 
-              <div className="text-lg w-[100%]">
+
+              <div className="text-lg w-[100%] mt-10">
                 <strong>Job Overview:</strong>
                 <p>
-                  There is a recruitment for a <span className="font-semibold">{selectedJob.jobTitle}</span> at <span className="font-semibold">{selectedJob.companyName}</span>
+                  There is a recruitment for a &nbsp; <span className="font-semibold">{selectedJob.jobTitle}</span> &nbsp; at &nbsp;<span className="font-semibold">{selectedJob.companyName}</span>&nbsp;
                   The position requires <span className="font-semibold">{selectedJob.experience}</span> of experience and offers a <span className="font-semibold">{selectedJob.workModel}</span> work model
-                  The job is located in <span className="font-semibold">{selectedJob.companyLocation}</span>
-                  For more details about the job, you can contact <span className="font-semibold">{selectedJob.email}</span> or call <span className="font-semibold">{selectedJob.phone}</span>
-                  Job responsibilities include: <span className="font-semibold">{selectedJob.jobDescription}</span>.
+                  The job is located in <span className="font-semibold">{selectedJob.companyLocation}</span>&nbsp;
+                  For more details about the job, you can contact <span className="font-semibold">{selectedJob.email}</span> or call <span className="font-semibold">{selectedJob.phone}</span>&nbsp;
+                  Job responsibilities include  <span className="font-semibold">{selectedJob.jobDescription}</span>.
                 </p>
               </div>
 

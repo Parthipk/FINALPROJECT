@@ -35,7 +35,7 @@ export default function Navbar() {
     const interval = setInterval(() => {
       const firstName = Cookie.get('firstName');
       const companyName = Cookie.get('companyName');
-      
+
       if (firstName) {
         setUserName(firstName); // If it's a candidate, set first name
         setUserRole('candidate'); // Set the role as candidate
@@ -94,7 +94,7 @@ export default function Navbar() {
             <button onClick={() => navigate('/about')} className="text-white bg-transparent w-84 py-2 px-4 rounded">
               About
             </button>
-            <button onClick={() => navigate('/contact')} className="text-white bg-transparent w-84 py-2 px-4 rounded">
+            <button onClick={() => navigate('/about')} className="text-white bg-transparent w-84 py-2 px-4 rounded">
               Contact
             </button>
           </div>
@@ -103,7 +103,7 @@ export default function Navbar() {
           <div className="flex space-x-4 ml-auto">
             {userName ? (
               <>
-                <span className="text-white py-2 px-4">{`Welcome ${userRole === 'candidate' ? 'Candidate' : 'Recruiter'} , ${userName} `}</span> 
+                <span className="text-white py-2 px-4">{`Welcome ${userRole === 'candidate' ? 'Candidate' : 'Recruiter'} , ${userName} `}</span>
                 <button
                   className="text-white py-2 px-4"
                   onClick={handleLogout} // Logout action
@@ -121,10 +121,12 @@ export default function Navbar() {
                 </button>
 
                 <button
-                  className="bg-[#309689] text-white py-2 px-4 rounded hover:bg-red-600"
-                  onClick={togglePopup2} // Toggle recruiter popup visibility when clicked
+                  className="bg-[#309689] text-white py-2 px-4 rounded-full hover:bg-[#309689]"
+
                 >
-                  Recruiter Login
+                  <Link to="/recuterLogin" >
+                    Post a job
+                  </Link>
                 </button>
               </>
             )}

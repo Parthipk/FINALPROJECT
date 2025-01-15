@@ -36,7 +36,7 @@ function App() {
         <Route path="/jobs" element={
          <>
           <Landing/>
-          <Jobs/>
+        
           <Footer/>
           </>
         }/>

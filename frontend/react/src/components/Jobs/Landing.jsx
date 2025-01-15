@@ -12,7 +12,7 @@ export default function Landing() {
              <SearchButton/>
             </div>
         </div>
-        <Jobs/>
+        <Jobs/> 
       
     </div>
   )

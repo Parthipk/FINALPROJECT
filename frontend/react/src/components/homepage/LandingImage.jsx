@@ -12,13 +12,13 @@ export default function LandingImage() {
     <div className="relative w-full h-screen">
          <Navebar/>
       <img
-        src="https://www.make-it-in-germany.com/fileadmin/_processed_/5/b/csm_H_1__iStock.com_Charday_Penn_a07f9f51c8.jpg"
+        src="https://static.vecteezy.com/system/resources/previews/029/882/486/non_2x/diversity-people-of-all-races-and-genders-together-free-photo.jpg"
         alt="Landing"
         className="object-cover w-full h-full"
       />
       <div className="absolute top-0 left-0 w-full h-full bg-black opacity-30"></div>
 
-      <div className="absolute top-0 left-0 w-full p-4 z-10">
+      <div className="absolute -top-16 left-0 w-full p-4 z-10">
       <SearchButton onSearch={handleSearch} />
       </div>
 
